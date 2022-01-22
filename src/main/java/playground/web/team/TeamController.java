@@ -21,4 +21,10 @@ public class TeamController {
         List<TeamResponse> teamResponses = teamService.findAllTeams();
         return ResponseEntity.ok(teamResponses);
     }
+
+    @GetMapping("/api/teams/members")
+    public ResponseEntity<List<TeamMemberResponse>> getTeamMembers(Long teamId) {
+        List<TeamMemberResponse> teamMemberResponses = teamService.getMembersById(teamId);
+        return ResponseEntity.ok(teamMemberResponses);
+    }
 }

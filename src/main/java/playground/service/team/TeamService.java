@@ -28,4 +28,12 @@ public class TeamService {
                 .map(TeamResponse::new)
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public List<TeamMemberResponse> getMembersById(Long teamId) {
+        List<User> users = userRepository.findByTeamId(teamId);
+        return users.stream()
+                .map(TeamMemberResponse::new)
+                .collect(Collectors.toList());
+    }
 }

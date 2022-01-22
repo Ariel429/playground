@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import playground.domain.document.Document;
+import playground.domain.team.Team;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -26,15 +27,24 @@ public class User {
 
     private String name;
 
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey)
+    private Team team;
+
+    @Enumerated(EnumType.STRING)
+    private JobPosition jobPosition;
+
     @OneToMany(mappedBy = "drafter", cascade = CascadeType.ALL)
-    private List<Document> documents = new ArrayList<>();
+    private final List<Document> documents = new ArrayList<>();
 
     @Builder
-    private User(Long id, String email, String password, String name) {
+    private User(Long id, String email, String password, String name, Team team, JobPosition jobPosition) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
+        this.team = team;
+        this.jobPosition = jobPosition;
     }
 
 }
