@@ -18,3 +18,7 @@ Content-Type: application/json
     2
   ]
 }
+
+### document category 조회
+GET http://localhost:8080/api/documents/categories
+Accept: application/json
