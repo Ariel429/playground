@@ -9,6 +9,7 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
+@Entity
 public class Document {
 
     @Id
