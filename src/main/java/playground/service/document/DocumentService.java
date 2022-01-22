@@ -35,9 +35,10 @@ public class DocumentService {
     }
 
     public DocumentResponseDto findDocument(Long documentId) {
-        Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new RuntimeException());
-
+        Document document = documentRepository.findByDocumentIdAll(documentId);
+        if (document == null) {
+            throw new RuntimeException();
+        }
         return new DocumentResponseDto(document);
     }
 

@@ -15,10 +15,8 @@ public class DocumentApprovalResponse {
     private final String approvalComment;
 
     public DocumentApprovalResponse(DocumentApproval documentApproval) {
-        TeamMemberResponse teamInfo = new TeamMemberResponse(documentApproval.getApprover());
-
-        this.approverTeamName = teamInfo.getTeamName();
-        this.approverName = teamInfo.getName();
+        this.approverTeamName = documentApproval.getApprover().getTeam().getName();
+        this.approverName = documentApproval.getApprover().getName();
         this.approvalState = documentApproval.getApprovalState();
         this.approvalOrder = documentApproval.getApprovalOrder();
         this.approvalComment = documentApproval.getApprovalComment();
