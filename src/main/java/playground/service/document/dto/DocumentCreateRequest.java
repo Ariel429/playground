@@ -1,17 +1,15 @@
-package playground.web.document.dto;
+package playground.service.document.dto;
 
-import lombok.Getter;
+import playground.domain.document.ApprovalState;
 import playground.domain.document.Category;
 import playground.domain.document.Document;
 import playground.domain.user.User;
 
 import java.util.List;
 
-import static playground.domain.document.ApprovalState.DRAFTING;
+import static playground.domain.document.ApprovalState.*;
 
-@Getter
 public class DocumentCreateRequest {
-
     private String title;
     private Category category;
     private String contents;
@@ -28,5 +26,4 @@ public class DocumentCreateRequest {
                 .approvalState(DRAFTING)
                 .build();
     }
-
 }

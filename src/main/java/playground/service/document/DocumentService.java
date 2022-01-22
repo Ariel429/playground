@@ -3,17 +3,17 @@ package playground.service.document;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import playground.dao.document.DocumentApprovalDao;
-import playground.dao.document.DocumentDao;
 import playground.dao.document.dto.DocumentTitleResponse;
-import playground.dao.user.UserDao;
 import playground.domain.document.Document;
 import playground.domain.document.DocumentApproval;
+import playground.domain.document.DocumentRepository;
 import playground.domain.user.User;
+import playground.domain.user.UserRepository;
 import playground.service.document.dto.DocumentResponseDto;
 import playground.web.document.dto.DocumentCreateRequest;
 import playground.web.document.dto.DocumentOutboxRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,38 +24,48 @@ import static playground.domain.document.ApprovalState.DRAFTING;
 @Service
 public class DocumentService {
 
-    private final DocumentDao documentDao;
-    private final DocumentApprovalDao documentApprovalDao;
-    private final UserDao userDao;
+    private final DocumentRepository documentRepository;
+    private final UserRepository userRepository;
 
     public List<DocumentTitleResponse> findOutboxDocuments(DocumentOutboxRequest request) {
-        List<Document> outboxDocuments = documentDao.findStateDocumentsByDrafterId(request.getDrafterId(), DRAFTING);
+        User drafter = userRepository.findById(request.getDrafterId())
+                .orElseThrow(() -> new RuntimeException());
+        List<Document> outboxDocuments = documentRepository.findByDrafterAndApprovalState(drafter, DRAFTING);
         return convertTitleDtoFrom(outboxDocuments);
     }
 
     public DocumentResponseDto findDocument(Long documentId) {
-        Document document = documentDao.findById(documentId);
-        User drafter = userDao.findById(document.getDrafterId());
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new RuntimeException());
 
-        return new DocumentResponseDto(document, drafter);
+        return new DocumentResponseDto(document);
     }
 
     @Transactional
     public void create(DocumentCreateRequest request) {
-        Document document = request.toEntity();
-        Long documentId = documentDao.save(document);
+        User drafter = userRepository.findById(request.getDrafterId())
+                .orElseThrow(() -> new RuntimeException());
+
+        Document document = request.toEntity(drafter);
 
         List<Long> approverIds = request.getApproverIds();
+        List<DocumentApproval> documentApprovals = new ArrayList<>();
 
         for (int index = 0; index < approverIds.size(); index++) {
+            User approver = userRepository.findById(approverIds.get(index))
+                    .orElseThrow(() -> new RuntimeException());
+
             DocumentApproval documentApproval = DocumentApproval.builder()
-                    .documentId(documentId)
+                    .document(document)
                     .approvalState(DRAFTING)
-                    .approverId(approverIds.get(index))
+                    .approver(approver)
                     .approvalOrder(index + 1)
                     .build();
-            documentApprovalDao.save(documentApproval);
+
+            documentApprovals.add(documentApproval);
         }
+        document.setDocumentApprovals(documentApprovals);
+        documentRepository.save(document);
     }
 
     private List<DocumentTitleResponse> convertTitleDtoFrom(List<Document> documents) {

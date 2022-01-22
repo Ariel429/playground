@@ -19,15 +19,16 @@ public class DocumentResponseDto {
     private ApprovalState approvalState;
     private String userName;
 
-    public DocumentResponseDto(Document document, User drafter) {
+
+    public DocumentResponseDto(Document document) {
         this.id = document.getId();
         this.title = document.getTitle();
         this.category = document.getCategory();
         this.contents = document.getContents();
         this.approvalState = document.getApprovalState();
 
-        this.userId = drafter.getId();
-        this.userName = drafter.getName();
+        this.userId = document.getDrafter().getId();
+        this.userName = document.getDrafter().getName();
     }
 
     public String getCategoryText() {

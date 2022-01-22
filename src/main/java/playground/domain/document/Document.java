@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import playground.domain.user.User;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -34,6 +36,9 @@ public class Document {
     @JoinColumn(name = "drafter_id")
     private User drafter;
 
+    @OneToMany(mappedBy = "approver", cascade = CascadeType.ALL)
+    private List<DocumentApproval> documentApprovals = new ArrayList<>();
+
     @Builder
     private Document(Long id, String title, Category category, String contents, ApprovalState approvalState, User drafter) {
         this.id = id;
@@ -44,4 +49,7 @@ public class Document {
         this.drafter = drafter;
     }
 
+    public void setDocumentApprovals(List<DocumentApproval> documentApprovals) {
+        this.documentApprovals = documentApprovals;
+    }
 }
