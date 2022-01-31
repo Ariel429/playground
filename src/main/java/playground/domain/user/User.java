@@ -27,7 +27,7 @@ public class User {
 
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey)
     private Team team;
 

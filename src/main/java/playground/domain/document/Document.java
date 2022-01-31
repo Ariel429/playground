@@ -40,7 +40,7 @@ public class Document {
     private List<DocumentApproval> documentApprovals = new ArrayList<>();
 
     @Builder
-    private Document(Long id, String title, Category category, String contents, ApprovalState approvalState, User drafter) {
+    public Document(Long id, String title, Category category, String contents, ApprovalState approvalState, User drafter) {
         this.id = id;
         this.title = title;
         this.category = category;
